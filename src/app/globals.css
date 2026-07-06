@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+/* ── Nexo design tokens — "Arena at night" (§4.1) ── */
+:root {
+  --bg-base: #0e1116;
+  --bg-raised: #161b22;
+  --bg-overlay: #1e2530;
+  --border-subtle: #2a3240;
+  --border-hover: #3a4454;
+  --text-primary: #f2f5f9;
+  --text-secondary: #96a0ae;
+  --accent: #3ddc97;
+  --accent-press: #2fb87d;
+  --accent-ink: #07100c;
+  --mask-purple: #8b7cf6;
+  --live-red: #ff4d5e;
+  --danger: #f0564a;
+  --warning: #f5b942;
+}
+
+[data-theme="light"] {
+  --bg-base: #fafbfc;
+  --bg-raised: #ffffff;
+  --bg-overlay: #f0f2f5;
+  --border-subtle: #e2e6eb;
+  --border-hover: #c9cfd8;
+  --text-primary: #101418;
+  --text-secondary: #5a6472;
+}
+
+@theme inline {
+  --color-base: var(--bg-base);
+  --color-raised: var(--bg-raised);
+  --color-overlay: var(--bg-overlay);
+  --color-line: var(--border-subtle);
+  --color-line-hover: var(--border-hover);
+  --color-fg: var(--text-primary);
+  --color-fg-muted: var(--text-secondary);
+  --color-accent: var(--accent);
+  --color-accent-press: var(--accent-press);
+  --color-accent-ink: var(--accent-ink);
+  --color-mask: var(--mask-purple);
+  --color-live: var(--live-red);
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+
+  --font-display: var(--font-space-grotesk);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
+  --font-bengali: var(--font-noto-bengali);
+
+  --radius-btn: 10px;
+  --radius-card: 14px;
+}
+
+body {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-inter), var(--font-noto-bengali), system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 22px;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-space-grotesk), var(--font-noto-bengali), system-ui, sans-serif;
+}
+
+/* Motion discipline (§4.3): 120–200ms ease-out, reduced-motion respected */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@keyframes card-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-rise {
+  animation: card-rise 200ms ease-out both;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--accent) 35%, transparent);
+}
+
+/* Thin scrollbars for rails */
+.rail-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-subtle) transparent;
+}

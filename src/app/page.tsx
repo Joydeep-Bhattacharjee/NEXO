@@ -67,7 +67,7 @@ export default function LandingPage() {
               </h1>
               <p className="mt-6 max-w-[34rem] text-[18px] leading-7 text-fg-muted">
                 Share your clips, run your squad&apos;s server and say what you really think as your
-                Mask. Built for gamers in Bangladesh, in English and বাংলা.
+                Mask. Built for gamers.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <Link href="/auth">

@@ -9,13 +9,11 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const VARIANT_CLASSES: Record<Variant, string> = {
-  primary:
-    "bg-accent text-accent-ink hover:bg-accent-press font-semibold",
-  secondary:
-    "bg-transparent border border-line text-fg hover:border-line-hover",
-  ghost: "bg-transparent text-accent hover:bg-overlay",
-  danger: "bg-danger text-white hover:opacity-90 font-semibold",
-  mask: "bg-mask text-white hover:opacity-90 font-semibold",
+  primary: "bg-accent text-accent-ink hover:bg-accent-press font-medium",
+  secondary: "bg-overlay border border-line text-fg hover:border-line-hover",
+  ghost: "bg-transparent text-fg-muted hover:bg-overlay hover:text-fg",
+  danger: "bg-transparent border border-danger/40 text-danger hover:bg-danger/10 font-medium",
+  mask: "bg-mask/15 border border-mask/40 text-mask hover:bg-mask/25 font-medium",
 };
 
 const SIZE_CLASSES: Record<Size, string> = {
@@ -31,7 +29,7 @@ export function Button({
 }: Props) {
   return (
     <button
-      className={`inline-flex items-center justify-center gap-2 rounded-btn transition-all duration-150 ease-out active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-40 disabled:pointer-events-none cursor-pointer ${VARIANT_CLASSES[variant]} ${SIZE_CLASSES[size]} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-btn transition-[color,background-color,border-color,transform] duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-40 disabled:pointer-events-none cursor-pointer ${VARIANT_CLASSES[variant]} ${SIZE_CLASSES[size]} ${className}`}
       {...rest}
     />
   );

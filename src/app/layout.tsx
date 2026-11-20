@@ -1,37 +1,26 @@
 import type { Metadata } from "next";
-import {
-  Inter,
-  JetBrains_Mono,
-  Noto_Sans_Bengali,
-  Space_Grotesk,
-} from "next/font/google";
+import { Big_Shoulders, Hind_Siliguri } from "next/font/google";
+import { ZoneTransitionLayer } from "@/components/anon/ZoneTransition";
+import { ThemeApplier } from "@/components/ui/ThemeApplier";
+import { Toaster } from "@/components/ui/Toaster";
 import "./globals.css";
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+/** Scoreboard display face: condensed, loud, used for the wordmark and headlines only. */
+const bigShoulders = Big_Shoulders({
+  variable: "--font-big-shoulders",
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: "variable",
 });
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
-  subsets: ["latin"],
-  weight: ["500"],
-});
-
-const notoBengali = Noto_Sans_Bengali({
-  variable: "--font-noto-bengali",
-  subsets: ["bengali"],
+/** One body family drawn for both Bengali and Latin, so বাংলা and English sit together. */
+const hindSiliguri = Hind_Siliguri({
+  variable: "--font-hind",
+  subsets: ["bengali", "latin"],
   weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
-  title: "Nexo — Play loud. Post quiet.",
+  title: "Nexo · Play loud, post quiet",
   description: "Clips, communities, and an anonymous zone built for gamers.",
 };
 
@@ -43,9 +32,14 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable} ${notoBengali.variable} h-full antialiased`}
+      className={`${bigShoulders.variable} ${hindSiliguri.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <ZoneTransitionLayer />
+        <Toaster />
+        <ThemeApplier />
+      </body>
     </html>
   );
 }

@@ -1,42 +1,50 @@
 import Link from "next/link";
+import {
+  ClipsPreview,
+  HeroPreview,
+  RealmPreview,
+  ServerPreview,
+} from "@/components/landing/Previews";
+import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
+import { LanguageSwitch } from "@/components/ui/LanguageSwitch";
 import { formatCount, STREAMS } from "@/lib/mock-data";
 
 const FEATURES = [
   {
-    title: "A feed that actually plays",
-    body: "Short gameplay clips in an endless vertical feed — autoplay, react with 🔥 GG, drop takes, share the madness.",
-    mock: "🎬",
     label: "Clip feed",
+    title: "A feed that actually plays",
+    body: "Short gameplay clips that autoplay as you scroll. React GG, drop your take, send the madness to your squad.",
+    preview: ClipsPreview,
+    isMask: false,
   },
   {
-    title: "Servers for your squad",
-    body: "Game-based servers with sub-servers, text channels, voice rooms and an AI assistant that summarizes what you missed.",
-    mock: "🗂️",
     label: "Servers",
+    title: "A server for every squad",
+    body: "Game servers with sub-servers, text channels and voice rooms. Ask Adda and it sums up what you missed while you slept.",
+    preview: ServerPreview,
+    isMask: false,
   },
   {
+    label: "Realms",
     title: "Say it as your Mask",
-    body: "One persistent anonymous identity per Realm. Build reputation without revealing yourself. Flip identities with one tap.",
-    mock: "🎭",
-    label: "Realms — the anonymous zone",
+    body: "Step into a separate side of Nexo with an identity you make up. Keep a few if you like. Nobody can trace them to your main or to each other.",
+    preview: RealmPreview,
+    isMask: true,
   },
-];
+] as const;
 
 export default function LandingPage() {
   return (
     <div className="flex min-h-screen flex-col">
-      {/* nav */}
       <header className="sticky top-0 z-40 border-b border-line bg-base/90 backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-[1200px] items-center justify-between px-4">
-          <span className="font-display text-lg font-bold tracking-tight">
+        <div className="mx-auto flex h-14 max-w-[1200px] items-center justify-between px-4 lg:px-6">
+          <span className="font-display text-[24px] font-bold leading-none">
             nexo<span className="text-accent">.</span>
           </span>
-          <div className="flex items-center gap-2">
-            <Link href="/auth">
-              <Button variant="ghost" size="compact">
-                Log in
-              </Button>
+          <div className="flex items-center gap-4">
+            <Link href="/auth" className="text-[14px] text-fg-muted transition-colors hover:text-fg">
+              Log in
             </Link>
             <Link href="/auth">
               <Button size="compact">Join free</Button>
@@ -46,106 +54,90 @@ export default function LandingPage() {
       </header>
 
       <main className="flex-1">
-        {/* hero */}
-        <section
-          aria-labelledby="hero-heading"
-          className="relative overflow-hidden border-b border-line"
-        >
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(61,220,151,0.08),transparent_60%)]"
-          />
-          <div className="mx-auto flex max-w-[1200px] flex-col items-center px-4 py-24 text-center md:py-32">
-            <h1
-              id="hero-heading"
-              className="font-display text-5xl font-bold leading-none tracking-tight md:text-7xl"
-            >
-              Play loud.
-              <br />
-              <span className="text-accent">Post quiet.</span>
-            </h1>
-            <p className="mt-5 max-w-md text-[17px] text-fg-muted">
-              Clips, communities, and an anonymous zone built for gamers.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Link href="/auth">
-                <Button>Join free</Button>
-              </Link>
-              <Link href="/live">
-                <Button variant="secondary">Watch live now</Button>
-              </Link>
+        <section aria-labelledby="hero-heading" className="overflow-hidden border-b border-line">
+          <div className="mx-auto grid max-w-[1200px] items-center gap-12 px-4 py-16 md:py-24 lg:grid-cols-[1fr_1.05fr] lg:gap-16 lg:px-6">
+            <div className="card-rise">
+              <h1
+                id="hero-heading"
+                className="font-display text-[72px] font-extrabold leading-[0.92] md:text-[128px]"
+              >
+                Play loud.
+                <br />
+                Post quiet.
+              </h1>
+              <p className="mt-6 max-w-[34rem] text-[18px] leading-7 text-fg-muted">
+                Share your clips, run your squad&apos;s server and say what you really think as your
+                Mask. Built for gamers in Bangladesh, in English and বাংলা.
+              </p>
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <Link href="/auth">
+                  <Button>Join free</Button>
+                </Link>
+                <Link href="/live">
+                  <Button variant="secondary">Watch who&apos;s live</Button>
+                </Link>
+              </div>
+            </div>
+            <div className="card-rise [animation-delay:80ms]">
+              <HeroPreview />
             </div>
           </div>
         </section>
 
-        {/* live ticker */}
         <section aria-label="Live now" className="border-b border-line bg-raised">
-          <div className="mx-auto flex max-w-[1200px] items-center gap-6 overflow-x-auto px-4 py-3 rail-scroll">
-            <span className="flex shrink-0 items-center gap-2 text-[13px] font-semibold text-live">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-live" aria-hidden />
-              LIVE
+          <div className="rail-scroll mx-auto flex max-w-[1200px] items-center gap-8 overflow-x-auto px-4 py-3 lg:px-6">
+            <span className="flex shrink-0 items-center gap-2 text-[13px] font-medium text-live">
+              <span className="h-2 w-2 rounded-full bg-live" aria-hidden />
+              Live now
             </span>
             {STREAMS.map((st) => (
               <Link
                 key={st.id}
                 href={`/live/${st.streamerHandle}`}
-                className="flex shrink-0 items-center gap-2 text-[13px] text-fg-muted transition-colors hover:text-fg"
+                className="flex shrink-0 items-center gap-2.5 text-[13px] text-fg-muted transition-colors hover:text-fg"
               >
-                <span>{st.avatar}</span>
-                <span className="font-medium text-fg">{st.streamer}</span>
+                <Avatar name={st.streamer} size={24} />
+                <span className="text-fg">{st.streamer}</span>
                 <span>{st.game}</span>
-                <span className="font-mono text-live">{formatCount(st.viewers)} watching</span>
+                <span className="font-mono text-[12px]">{formatCount(st.viewers)} watching</span>
               </Link>
             ))}
           </div>
         </section>
 
-        {/* feature rows */}
-        <section className="mx-auto flex max-w-[1200px] flex-col gap-20 px-4 py-20">
-          {FEATURES.map((f, i) => (
-            <div
-              key={f.title}
-              className={`flex flex-col items-center gap-8 md:gap-16 ${
-                i % 2 === 1 ? "md:flex-row-reverse" : "md:flex-row"
-              }`}
-            >
-              <div className="flex-1">
-                <p
-                  className={`text-[13px] font-semibold uppercase tracking-widest ${
-                    i === 2 ? "text-mask" : "text-accent"
-                  }`}
-                >
-                  {f.label}
-                </p>
-                <h2 className="mt-2 font-display text-3xl font-bold">{f.title}</h2>
-                <p className="mt-3 max-w-md text-fg-muted">{f.body}</p>
-              </div>
+        <section className="mx-auto flex max-w-[1200px] flex-col gap-24 px-4 py-24 lg:gap-32 lg:px-6 lg:py-32">
+          {FEATURES.map((f, i) => {
+            const Preview = f.preview;
+            return (
               <div
-                className={`flex aspect-[4/3] w-full flex-1 items-center justify-center rounded-card border text-7xl ${
-                  i === 2 ? "border-mask/40 bg-mask/10" : "border-line bg-raised"
+                key={f.title}
+                className={`grid items-center gap-10 md:grid-cols-2 md:gap-16 ${
+                  i % 2 === 1 ? "md:[&>*:first-child]:order-2" : ""
                 }`}
-                aria-hidden
               >
-                {f.mock}
+                <div>
+                  <p className={`text-[14px] ${f.isMask ? "text-mask" : "text-fg-muted"}`}>{f.label}</p>
+                  <h2 className="mt-2 font-display text-[44px] font-bold leading-[0.95] md:text-[60px]">
+                    {f.title}
+                  </h2>
+                  <p className="mt-4 max-w-md text-[16px] leading-6 text-fg-muted">{f.body}</p>
+                </div>
+                <Preview />
               </div>
-            </div>
-          ))}
+            );
+          })}
         </section>
       </main>
 
-      {/* footer */}
       <footer className="border-t border-line">
-        <div className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-4 px-4 py-8 text-[13px] text-fg-muted">
-          <nav aria-label="Footer" className="flex flex-wrap gap-5">
-            <a href="#" className="hover:text-fg">About</a>
-            <a href="#" className="hover:text-fg">Terms</a>
-            <a href="#" className="hover:text-fg">Privacy</a>
-            <a href="#" className="hover:text-fg">Community Guidelines</a>
+        <div className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-4 px-4 py-8 text-[13px] text-fg-muted lg:px-6">
+          <nav aria-label="Footer" className="flex flex-wrap gap-6">
+            <Link href="/about#about" className="transition-colors hover:text-fg">About</Link>
+            <Link href="/about#terms" className="transition-colors hover:text-fg">Terms</Link>
+            <Link href="/about#privacy" className="transition-colors hover:text-fg">Privacy</Link>
+            <Link href="/about#guidelines" className="transition-colors hover:text-fg">Community guidelines</Link>
           </nav>
-          <div className="flex items-center gap-2 font-mono text-[12px]">
-            <button className="rounded border border-line px-2 py-0.5 text-accent cursor-pointer">EN</button>
-            <button className="rounded border border-line px-2 py-0.5 hover:text-fg cursor-pointer">বাংলা</button>
-          </div>
+          <LanguageSwitch />
         </div>
       </footer>
     </div>

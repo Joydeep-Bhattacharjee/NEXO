@@ -1,31 +1,57 @@
 @import "tailwindcss";
 
-/* ── Nexo design tokens — "Arena at night" (§4.1) ── */
+/* ── Nexo design tokens — "Monsoon night": deep teal-green ground, chalk text, marigold accent ── */
 :root {
-  --bg-base: #0e1116;
-  --bg-raised: #161b22;
-  --bg-overlay: #1e2530;
-  --border-subtle: #2a3240;
-  --border-hover: #3a4454;
-  --text-primary: #f2f5f9;
-  --text-secondary: #96a0ae;
-  --accent: #3ddc97;
-  --accent-press: #2fb87d;
-  --accent-ink: #07100c;
-  --mask-purple: #8b7cf6;
-  --live-red: #ff4d5e;
+  --bg-base: #0f1c1a;
+  --bg-raised: #162523;
+  --bg-overlay: #1e302d;
+  --border-subtle: #29403b;
+  --border-hover: #3a5650;
+  --text-primary: #ede6d6;
+  --text-secondary: #9fb0aa;
+  --accent: #f2a93b;
+  --accent-press: #dd9526;
+  --accent-ink: #1a1206;
+  --mask-purple: #e2d9c6; /* bone: anonymous zone, not an AI violet */
+  --live-red: #ff5a4e;
   --danger: #f0564a;
-  --warning: #f5b942;
+  --warning: #ff8a4c;
+  --anon-card-bg: #1b1a17;
+  --anon-card-border: #34302a;
+  --anon-card-hover: #45403a;
+  --anon-card-text: #e9e2d3;
+  --anon-card-muted: #a39b8d;
+  --anon-icon-bg: #26241f;
+  --anon-icon: #d6ccb8;
+}
+
+[data-theme="amoled"] {
+  --bg-base: #000000;
+  --bg-raised: #0a1110;
+  --bg-overlay: #13201e;
+  --border-subtle: #1d2c29;
+  --border-hover: #2c423e;
 }
 
 [data-theme="light"] {
-  --bg-base: #fafbfc;
+  --anon-card-bg: #f6f3ec;
+  --anon-card-border: #d8d0c2;
+  --anon-card-hover: #bfb5a4;
+  --anon-card-text: #2b2620;
+  --anon-card-muted: #6b6257;
+  --anon-icon-bg: #ebe5d9;
+  --anon-icon: #4a4136;
+  --mask-purple: #4a4136;
+  --bg-base: #eef2f0;
   --bg-raised: #ffffff;
-  --bg-overlay: #f0f2f5;
-  --border-subtle: #e2e6eb;
-  --border-hover: #c9cfd8;
-  --text-primary: #101418;
-  --text-secondary: #5a6472;
+  --bg-overlay: #e2e9e6;
+  --border-subtle: #d3ddd9;
+  --border-hover: #b3c3bd;
+  --text-primary: #0f1c1a;
+  --text-secondary: #4f625d;
+  --accent: #b86e0a;
+  --accent-press: #9c5c06;
+  --accent-ink: #ffffff;
 }
 
 @theme inline {
@@ -44,28 +70,42 @@
   --color-danger: var(--danger);
   --color-warning: var(--warning);
 
-  --font-display: var(--font-space-grotesk);
-  --font-sans: var(--font-inter);
-  --font-mono: var(--font-jetbrains-mono);
-  --font-bengali: var(--font-noto-bengali);
+  --font-display: var(--font-big-shoulders);
+  --font-sans: var(--font-hind);
+  /* No monospace: counts and times use the body face with tabular figures. */
+  --font-mono: var(--font-hind);
+  --font-bengali: var(--font-hind);
 
   --radius-btn: 10px;
   --radius-card: 14px;
+
+  --ease-out-quart: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 body {
   background: var(--bg-base);
   color: var(--text-primary);
-  font-family: var(--font-inter), var(--font-noto-bengali), system-ui, sans-serif;
+  font-family: var(--font-hind), system-ui, sans-serif;
   font-size: 15px;
   line-height: 22px;
 }
 
-h1,
+h1 {
+  font-family: var(--font-big-shoulders), var(--font-hind), system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.005em;
+}
+
 h2,
 h3,
 h4 {
-  font-family: var(--font-space-grotesk), var(--font-noto-bengali), system-ui, sans-serif;
+  font-weight: 600;
+}
+
+/* Figures line up across feeds, rails and stats */
+.font-mono,
+time {
+  font-variant-numeric: tabular-nums;
 }
 
 /* Motion discipline (§4.3): 120–200ms ease-out, reduced-motion respected */
@@ -91,7 +131,7 @@ h4 {
 }
 
 .card-rise {
-  animation: card-rise 200ms ease-out both;
+  animation: card-rise 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 ::selection {
@@ -102,4 +142,37 @@ h4 {
 .rail-scroll {
   scrollbar-width: thin;
   scrollbar-color: var(--border-subtle) transparent;
+}
+
+/* ── Anonymous zone: black and bone, like a masquerade after hours. Warm charcoal, no violet. ── */
+.zone-anon {
+  --bg-base: #0c0b0a;
+  --bg-raised: #151412;
+  --bg-overlay: #1f1d1a;
+  --border-subtle: #2a2723;
+  --border-hover: #3b3731;
+  --text-primary: #efe9de;
+  --text-secondary: #a59e91;
+  --accent: #e2d9c6;
+  --accent-press: #cfc4ad;
+  --accent-ink: #0c0b0a;
+  color-scheme: dark;
+  background: var(--bg-base);
+  color: var(--text-primary);
+}
+
+@keyframes zone-glyph {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.zone-glyph {
+  opacity: 0;
+  animation: zone-glyph 360ms cubic-bezier(0.22, 1, 0.36, 1) 200ms forwards;
 }

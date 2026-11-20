@@ -10,9 +10,9 @@ export default function AppLayout({
   return (
     <div className="flex min-h-screen flex-col">
       <TopBar />
-      <div className="mx-auto flex w-full max-w-[1200px] flex-1 gap-6 px-4 pb-20 lg:pb-6">
+      <div className="mx-auto flex w-full max-w-[1280px] flex-1 gap-8 px-4 pb-20 lg:px-6 lg:pb-8">
         <LeftRail />
-        <main className="min-w-0 flex-1 py-5">{children}</main>
+        <main className="min-w-0 flex-1 py-6">{children}</main>
         <RightRail />
       </div>
       <BottomTabs />

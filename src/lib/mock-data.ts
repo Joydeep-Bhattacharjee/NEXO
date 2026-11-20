@@ -1,5 +1,8 @@
 /* Synthetic mock data for the Nexo frontend MVP. All values fictional. */
 
+/** The moment the mock world is frozen at, so relative times stay plausible. */
+export const MOCK_NOW = "2026-07-07T09:30:00Z";
+
 export interface Game {
   id: string;
   name: string;
@@ -281,6 +284,9 @@ export const FEED_POSTS: Post[] = [
     postedAt: "2026-07-06T22:10:00Z",
   },
 ];
+
+/** The main feed only ever shows posts made under real profiles. Mask posts stay in the anonymous zone. */
+export const PUBLIC_POSTS: Post[] = FEED_POSTS.filter((p) => p.authorType === "user");
 
 export const SERVERS: Server[] = [
   {
@@ -646,11 +652,11 @@ export const STREAMS: Stream[] = [
 ];
 
 export const NOTIFICATIONS: Notification[] = [
-  { id: "n1", kind: "reaction", text: "Ria Akhtar and 41 others reacted 🔥 to your clip", time: "12m", unread: true },
+  { id: "n1", kind: "reaction", text: "Ria Akhtar and 41 others reacted GG to your clip", time: "12m", unread: true },
   { id: "n2", kind: "reply", text: "Tanvir GG replied: \"that pan play was criminal\"", time: "34m", unread: true },
   { id: "n3", kind: "live", text: "Nafis Plays went live: Heroic push final stretch", time: "1h", unread: true },
   { id: "n4", kind: "follow", text: "Pixel Pri started following you", time: "3h", unread: false },
-  { id: "n5", kind: "mod", text: "Your report in Free Fire BD was actioned. Thanks for keeping it clean.", time: "1d", unread: false },
+  { id: "n5", kind: "mod", text: "Your report in Free Fire BD was actioned. Thanks for keeping it clean", time: "1d", unread: false },
 ];
 
 export const DMS: DirectMessage[] = [

@@ -1,25 +1,22 @@
 import Link from "next/link";
+import { ClipThumb } from "@/components/media/ClipThumb";
 import { Avatar } from "@/components/ui/Avatar";
-import {
-  formatCount,
-  getMask,
-  getUser,
-  type Post,
-} from "@/lib/mock-data";
-
-const REACTIONS: { key: keyof Post["reactions"]; emoji: string; label: string }[] = [
-  { key: "gg", emoji: "🔥", label: "GG" },
-  { key: "skull", emoji: "💀", label: "Skull" },
-  { key: "lol", emoji: "😂", label: "LOL" },
-  { key: "brain", emoji: "🧠", label: "Big brain" },
-];
+import { PostActions } from "./PostActions";
+import { formatCount, getMask, getUser, MOCK_NOW, type Post } from "@/lib/mock-data";
 
 function timeAgo(iso: string): string {
-  const mins = Math.max(1, Math.floor((Date.now() - Date.parse(iso)) / 60000));
+  // Seeded posts are measured against the frozen mock clock; posts you make are measured against now.
+  const posted = Date.parse(iso);
+  const now = posted > Date.parse(MOCK_NOW) ? Date.now() : Date.parse(MOCK_NOW);
+  const mins = Math.max(1, Math.floor((now - posted) / 60000));
   if (mins < 60) return `${mins}m`;
   const hrs = Math.floor(mins / 60);
   if (hrs < 24) return `${hrs}h`;
   return `${Math.floor(hrs / 24)}d`;
+}
+
+function clipDuration(label?: string): string | undefined {
+  return label?.split("·")[1]?.trim();
 }
 
 export function FeedCard({ post }: { post: Post }) {
@@ -27,81 +24,58 @@ export function FeedCard({ post }: { post: Post }) {
   const mask = isMask ? getMask(post.authorId) : undefined;
   const user = !isMask ? getUser(post.authorId) : undefined;
   const name = isMask ? (mask?.displayName ?? "Unknown Mask") : (user?.displayName ?? "Unknown");
-  const avatar = isMask ? (mask?.avatar ?? "🎭") : (user?.avatar ?? "👤");
+  // Masks never link anywhere: an anonymous post must not lead back to a profile.
+  const profileHref = user ? `/u/${user.handle}` : undefined;
+  const isLive = post.kind === "live";
+  const hasMedia = post.kind === "clip" || isLive;
+  const views = post.views ? `${formatCount(post.views)} views` : undefined;
 
   return (
-    <article className="card-rise rounded-card border border-line bg-raised p-4 transition-colors duration-150 hover:border-line-hover">
-      {/* header */}
-      <div className="flex items-center gap-3">
-        <Avatar
-          emoji={avatar}
-          isMask={isMask}
-          isLive={post.kind === "live"}
-          label={name}
-        />
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-1.5">
-            <span className={`truncate text-[15px] font-semibold ${isMask ? "text-mask" : ""}`}>
-              {name}
-            </span>
-            {isMask && <span aria-label="anonymous mask" className="text-[11px]">🎭</span>}
-          </div>
-          <div className="flex items-center gap-2 text-[12px] text-fg-muted">
-            <span className="rounded bg-overlay px-1.5 py-0.5">{post.game}</span>
-            <time className="font-mono">{timeAgo(post.postedAt)}</time>
-          </div>
-        </div>
-        {post.kind === "live" && (
-          <span className="rounded-full bg-live px-2.5 py-0.5 text-[11px] font-bold uppercase text-white">
-            ● Live
-          </span>
+    <article className="border-b border-line px-1 py-5 sm:px-2">
+      <header className="flex items-center gap-3">
+        {profileHref ? (
+          <Link href={profileHref} aria-label={`${name}'s profile`} className="rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+            <Avatar name={name} size={36} />
+          </Link>
+        ) : (
+          <Avatar name={name} isMask={isMask} size={36} />
         )}
-      </div>
+        <div className="min-w-0 flex-1">
+          {profileHref ? (
+            <Link href={profileHref} className="block truncate text-[14px] font-medium transition-colors hover:text-accent">
+              {name}
+            </Link>
+          ) : (
+            <p className={`truncate text-[14px] font-medium ${isMask ? "text-mask" : ""}`}>
+              {name}
+              {isMask && <span className="sr-only"> (anonymous Mask)</span>}
+            </p>
+          )}
+          <p className="flex gap-3 truncate text-[13px] text-fg-muted">
+            <span>{post.game}</span>
+            <time>{timeAgo(post.postedAt)} ago</time>
+          </p>
+        </div>
+      </header>
 
-      {/* body */}
       <p className="mt-3 text-[15px] leading-[22px]">{post.body}</p>
 
-      {/* media placeholder */}
-      {(post.kind === "clip" || post.kind === "live") && (
+      {hasMedia && (
         <Link
           href={post.kind === "clip" ? `/clip/${post.id}` : "/live"}
-          className="mt-3 flex aspect-video items-center justify-center rounded-[10px] border border-line bg-base transition-colors hover:border-line-hover"
+          aria-label={isLive ? `Watch ${name} live` : `Play clip from ${name}`}
+          className="group mt-4 block"
         >
-          <span className="flex flex-col items-center gap-2 text-fg-muted">
-            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-overlay text-xl">
-              ▶
-            </span>
-            <span className="font-mono text-[12px]">
-              {post.mediaLabel ?? "live stream"}
-              {post.views ? ` · ${formatCount(post.views)} views` : ""}
-            </span>
-          </span>
+          <ClipThumb
+            game={post.game}
+            isLive={isLive}
+            duration={clipDuration(post.mediaLabel)}
+            meta={isLive ? "Watching now" : views}
+          />
         </Link>
       )}
 
-      {/* reaction bar */}
-      <div className="mt-3 flex items-center gap-1 border-t border-line pt-3">
-        {REACTIONS.map((r) => (
-          <button
-            key={r.key}
-            aria-label={`React ${r.label}`}
-            className="flex h-8 items-center gap-1 rounded-full px-2.5 text-[13px] text-fg-muted transition-colors duration-150 hover:bg-overlay hover:text-fg cursor-pointer"
-          >
-            <span aria-hidden>{r.emoji}</span>
-            <span className="font-mono">{formatCount(post.reactions[r.key])}</span>
-          </button>
-        ))}
-        <span className="flex-1" />
-        <button className="flex h-8 items-center gap-1 rounded-full px-2.5 text-[13px] text-fg-muted transition-colors hover:bg-overlay hover:text-fg cursor-pointer">
-          💬 <span className="font-mono">{formatCount(post.comments)}</span>
-        </button>
-        <button aria-label="Share" className="flex h-8 items-center rounded-full px-2.5 text-[13px] text-fg-muted transition-colors hover:bg-overlay hover:text-fg cursor-pointer">
-          ↗
-        </button>
-        <button aria-label="Save" className="flex h-8 items-center rounded-full px-2.5 text-[13px] text-fg-muted transition-colors hover:bg-overlay hover:text-fg cursor-pointer">
-          🔖
-        </button>
-      </div>
+      <PostActions post={post} />
     </article>
   );
 }

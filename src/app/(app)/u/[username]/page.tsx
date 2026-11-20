@@ -1,14 +1,19 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
-import { Chip } from "@/components/ui/Chip";
+import { FriendButton } from "@/components/friends/FriendButton";
+import { PhotoPicker } from "@/components/profile/PhotoPicker";
+import { ProfileSections } from "@/components/profile/ProfileSections";
 import {
   CURRENT_USER,
-  FEED_POSTS,
   formatCount,
+  PUBLIC_POSTS,
+  SERVERS,
   GAME_OF_LIFE_PROMPTS,
   USERS,
 } from "@/lib/mock-data";
+import { Scissors } from "lucide-react";
 
 /** §3.10 — Profile. Never shows Realm/Mask activity — hard wall. */
 export default async function ProfilePage({
@@ -20,22 +25,26 @@ export default async function ProfilePage({
   const user = USERS.find((u) => u.handle === username);
   if (!user) notFound();
   const isOwn = user.id === CURRENT_USER.id;
-  const clips = FEED_POSTS.filter(
-    (p) => p.authorType === "user" && p.authorId === user.id && p.kind === "clip",
+  const clips = PUBLIC_POSTS.filter((p) => p.authorId === user.id && p.kind === "clip");
+  const posts = PUBLIC_POSTS.filter((p) => p.authorId === user.id && p.kind !== "clip");
+  // Mock data only records membership for you; for others, show top-level servers for the games they play.
+  const games = user.gameTags.map((g) => g.toLowerCase().split(" ")[0]);
+  const servers = SERVERS.filter((s) =>
+    isOwn ? s.joined : !s.parentSlug && games.some((g) => s.name.toLowerCase().includes(g)),
   );
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-5">
       {/* header */}
       <header className="flex flex-col items-start gap-4 rounded-card border border-line bg-raised p-6 sm:flex-row sm:items-center">
-        <Avatar emoji={user.avatar} size={80} isLive={user.isLive} label={user.displayName} />
+        {isOwn ? <PhotoPicker /> : <Avatar size={80} isLive={user.isLive} name={user.displayName} />}
         <div className="min-w-0 flex-1">
-          <h1 className="font-display text-xl font-bold">{user.displayName}</h1>
+          <h1 className="font-display text-[28px] font-bold leading-tight">{user.displayName}</h1>
           <p className="font-mono text-[13px] text-fg-muted">@{user.handle}</p>
           <p className="mt-1 text-[14px]">{user.bio}</p>
           <div className="mt-2 flex flex-wrap gap-1.5">
             {user.gameTags.map((g) => (
-              <span key={g} className="rounded bg-overlay px-2 py-0.5 text-[12px] text-fg-muted">
+              <span key={g} className="rounded-[6px] border border-line px-2 text-[12px] leading-6 text-fg-muted">
                 {g}
               </span>
             ))}
@@ -48,13 +57,20 @@ export default async function ProfilePage({
         <div className="flex gap-2">
           {isOwn ? (
             <>
-              <Button size="compact">Add new post</Button>
-              <Button variant="secondary" size="compact">✨ AI edit</Button>
+              <Link href="/create">
+                <Button size="compact">New post</Button>
+              </Link>
+              <Link href="/create">
+              <Button variant="secondary" size="compact"><Scissors size={16} strokeWidth={1.5} aria-hidden />
+                Auto-cut</Button>
+              </Link>
             </>
           ) : (
             <>
-              <Button size="compact">Follow</Button>
-              <Button variant="secondary" size="compact">Message</Button>
+              <FriendButton userId={user.id} name={user.displayName} />
+              <Link href={`/inbox/u-${user.handle}`}>
+                <Button variant="secondary" size="compact">Message</Button>
+              </Link>
             </>
           )}
         </div>
@@ -62,7 +78,7 @@ export default async function ProfilePage({
 
       {/* game of life */}
       <section className="rounded-card border border-line bg-raised p-5">
-        <h2 className="text-[13px] font-semibold uppercase tracking-wide text-fg-muted">
+        <h2 className="text-[13px] font-medium text-fg-muted">
           Game of Life
         </h2>
         <ul className="mt-3 grid gap-3 sm:grid-cols-3">
@@ -75,26 +91,7 @@ export default async function ProfilePage({
         </ul>
       </section>
 
-      {/* tabs */}
-      <div className="flex gap-2" role="tablist" aria-label="Profile sections">
-        {["Posts", "Clips", "Servers", "About"].map((t, i) => (
-          <Chip key={t} isActive={i === 1}>{t}</Chip>
-        ))}
-      </div>
-
-      {/* clips grid */}
-      <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-        {clips.length > 0 ? (
-          clips.map((c) => (
-            <li key={c.id} className="flex aspect-[9/12] flex-col items-center justify-center gap-2 rounded-card border border-line bg-raised text-fg-muted">
-              ▶
-              <span className="font-mono text-[11px]">{formatCount(c.views ?? 0)} views</span>
-            </li>
-          ))
-        ) : (
-          <li className="col-span-full py-8 text-center text-fg-muted">No clips yet.</li>
-        )}
-      </ul>
+      <ProfileSections clips={clips} posts={posts} servers={servers} isOwn={isOwn} />
     </div>
   );
 }

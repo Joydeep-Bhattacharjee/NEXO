@@ -40,7 +40,7 @@ export default function AuthPage() {
   return (
     <main className="flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-md rounded-card border border-line bg-raised p-6">
-        <Link href="/" className="font-display text-lg font-bold">
+        <Link href="/" className="font-display text-[24px] font-bold">
           nexo<span className="text-accent">.</span>
         </Link>
 
@@ -68,7 +68,7 @@ export default function AuthPage() {
               type="email"
               required
               autoComplete="email"
-              placeholder="you@example.com"
+              placeholder="you@email.com"
               className="h-11 rounded-btn border border-transparent bg-overlay px-3 text-[15px] text-fg outline-none transition-colors focus:border-accent"
             />
           </label>
@@ -113,21 +113,21 @@ export default function AuthPage() {
 
         <div className="my-5 flex items-center gap-3 text-[12px] text-fg-muted">
           <span className="h-px flex-1 bg-line" aria-hidden />
-          or continue with
+          or
           <span className="h-px flex-1 bg-line" aria-hidden />
         </div>
 
         <div className="flex gap-3">
-          <Button variant="secondary" className="flex-1" size="compact">
+          <Button variant="secondary" className="flex-1" size="compact" onClick={() => router.push(tab === "signup" ? "/onboarding" : "/home")}>
             Google
           </Button>
-          <Button variant="secondary" className="flex-1" size="compact">
+          <Button variant="secondary" className="flex-1" size="compact" onClick={() => router.push(tab === "signup" ? "/onboarding" : "/home")}>
             Discord
           </Button>
         </div>
 
         <p className="mt-5 text-center text-[12px] text-fg-muted">
-          13+ only. By joining you agree to the Terms & Community Guidelines.
+          For ages 13 and up. Joining means you accept the Terms and Community guidelines
         </p>
       </div>
     </main>

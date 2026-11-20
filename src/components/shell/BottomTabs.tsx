@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Bell, Clapperboard, House, LayoutGrid, Plus, type LucideIcon } from "lucide-react";
 
-const TABS = [
-  { href: "/home", label: "Home", icon: "🏠" },
-  { href: "/servers", label: "Servers", icon: "🗂️" },
-  { href: "/create", label: "Create", icon: "➕" },
-  { href: "/realms", label: "Realms", icon: "🎭" },
-  { href: "/inbox", label: "Inbox", icon: "✉️" },
+const TABS: { href: string; label: string; icon: LucideIcon }[] = [
+  { href: "/home", label: "Home", icon: House },
+  { href: "/servers", label: "Servers", icon: LayoutGrid },
+  { href: "/create", label: "Create", icon: Plus },
+  { href: "/videos", label: "Videos", icon: Clapperboard },
+  { href: "/notifications", label: "Alerts", icon: Bell },
 ];
 
 /** Mobile bottom tab bar (§3.4). */
@@ -17,24 +18,22 @@ export function BottomTabs() {
   return (
     <nav
       aria-label="Primary"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-raised lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-raised pb-[env(safe-area-inset-bottom)] lg:hidden"
     >
       <ul className="flex h-14 items-stretch">
-        {TABS.map((t) => {
-          const isActive = pathname.startsWith(t.href);
+        {TABS.map(({ href, label, icon: Icon }) => {
+          const isActive = pathname.startsWith(href);
           return (
-            <li key={t.href} className="flex-1">
+            <li key={href} className="flex-1">
               <Link
-                href={t.href}
+                href={href}
                 aria-current={isActive ? "page" : undefined}
-                className={`flex h-full flex-col items-center justify-center gap-0.5 text-[10px] font-medium transition-colors ${
-                  isActive ? "text-accent" : "text-fg-muted hover:text-fg"
+                className={`flex h-full items-center justify-center transition-colors ${
+                  isActive ? "text-fg" : "text-fg-muted hover:text-fg"
                 }`}
               >
-                <span className="text-[18px]" aria-hidden>
-                  {t.icon}
-                </span>
-                {t.label}
+                <Icon size={22} strokeWidth={1.5} aria-hidden className={isActive ? "text-accent" : ""} />
+                <span className="sr-only">{label}</span>
               </Link>
             </li>
           );
